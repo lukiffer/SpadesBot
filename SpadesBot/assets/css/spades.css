@@ -1,0 +1,277 @@
+﻿html, body {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    font-family: 'Open Sans', helvetica, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {  
+    background: -moz-radial-gradient(center, ellipse cover, #4ba536 0%, #417f00 100%);
+    background: -webkit-radial-gradient(center, ellipse cover, #4ba536 0%,#417f00 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-radial-gradient(center, ellipse cover, #4ba536 0%,#417f00 100%); /* Opera 12+ */
+    background: -ms-radial-gradient(center, ellipse cover, #4ba536 0%,#417f00 100%); /* IE10+ */
+    background: radial-gradient(ellipse at center, #4ba536 0%,#417f00 100%); /* W3C */
+}
+
+body.red {
+    background: -moz-radial-gradient(center, ellipse cover, rgba(191,38,15,1) 0%, rgba(102,39,0,1) 100%); /* FF3.6+ */
+    background: -webkit-radial-gradient(center, ellipse cover, rgba(191,38,15,1) 0%,rgba(102,39,0,1) 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-radial-gradient(center, ellipse cover, rgba(191,38,15,1) 0%,rgba(102,39,0,1) 100%); /* Opera 12+ */
+    background: -ms-radial-gradient(center, ellipse cover, rgba(191,38,15,1) 0%,rgba(102,39,0,1) 100%); /* IE10+ */
+    background: radial-gradient(ellipse at center, rgba(191,38,15,1) 0%,rgba(102,39,0,1) 100%); /* W3C */
+}
+
+body.blue {
+    background: -moz-radial-gradient(center, ellipse cover, rgba(15,73,198,1) 0%, rgba(0,58,109,1) 100%); /* FF3.6+ */
+    background: -webkit-radial-gradient(center, ellipse cover, rgba(15,73,198,1) 0%,rgba(0,58,109,1) 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-radial-gradient(center, ellipse cover, rgba(15,73,198,1) 0%,rgba(0,58,109,1) 100%); /* Opera 12+ */
+    background: -ms-radial-gradient(center, ellipse cover, rgba(15,73,198,1) 0%,rgba(0,58,109,1) 100%); /* IE10+ */
+    background: radial-gradient(ellipse at center, rgba(15,73,198,1) 0%,rgba(0,58,109,1) 100%); /* W3C */
+}
+
+div.content {
+    padding: 10px 20px; 
+}
+
+h3, h4 {
+    font-weight: 300;
+    margin: 0;
+    padding: 0;
+    letter-spacing: -1px;
+    color: #fff;
+}
+
+h3 {
+    font-size: 48px;
+}
+
+h4 {
+    font-size: 28px;
+    padding: 10px 0 0 10px;
+    margin: 0;
+}
+
+div.score-card {
+    position: absolute;
+    width: 260px;
+    height: 100%;
+    top: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.40);
+    z-index: 9999;
+}
+
+div.player-config {
+    background: rgba(0, 0, 0, 0.35);
+    height: 120px;
+    width: 180px;
+    position: absolute;
+    z-index: 2;
+}
+
+    div.player-config.n {
+        top: 16px;
+        left: 50%;
+        margin-left: -150px;
+    }
+
+    div.player-config.e {
+        top: 50%;
+        margin-top: 40px;
+        right: 276px;
+    }
+
+    div.player-config.s {
+        bottom: 16px;
+        left: 50%;
+        margin-left: -350px;
+    }
+
+    div.player-config.w {
+        top: 50%;
+        margin-top: -160px;
+        left: 16px;
+    }
+
+    div.player-config div.colorbar {
+        height: 6px;
+        width: 100%;
+    }
+
+    div.player-config div.bid {
+        background: rgba(0, 0, 0, 0.3);
+        height: 32px;
+        width: 72px;
+        color: #fff;
+        font-size: 20px;
+        text-align: center;
+        padding-top: 4px;
+        float: right;
+        margin-right: 13px;
+        margin-top: 14px;
+    }
+
+    div.player-config.n div.colorbar, div.player-config.s div.colorbar {
+        background: #c7290a;
+    }
+
+    div.player-config.e div.colorbar, div.player-config.w div.colorbar {
+        background: #1377bf;
+    }
+
+    div.player-config input {
+        background: rgba(0, 0, 0, 0.6);
+        margin-left: 10px;
+        border: none;
+        padding: 6px 4px;
+        width: 150px;
+        margin-top: 14px;
+        color: #fff;
+        font-family: 'Open Sans', helvetica, sans-serif;
+    }
+
+    input#btnStartGame {
+        background: rgba(0, 0, 0, 0.6);
+        padding: 8px 24px;
+        font-size: 16px;
+        font-family: 'Open Sans', helvetica, sans-serif;
+        font-weight: 100;
+        letter-spacing: 1px;
+        border: 0;
+        color: #ccc;
+        position: absolute;
+        bottom: 16px;
+        right: 16px;
+        cursor: pointer;
+        width: 224px;
+    }
+
+    div.score-card table {
+        border: 0;
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    div.score-card td, div.score-card th {
+        padding: 5px 10px;
+        text-align: center;
+        color: #fff;
+        font-weight: 100;
+    }
+    
+    th.red { border-top: solid 6px #c7290a; }
+    th.red, td.red {
+        background: rgba(255,128,128,0.2);
+    }
+
+    th.blue { border-top: solid 6px #1377bf; }
+    th.blue, td.blue {
+        background: rgba(128,128,255,0.2);
+    }
+
+div.card {
+    background: transparent url('/assets/svg/cards.svg') no-repeat;
+    background-size: 1630px;
+    height: 167px;
+    width: 120px;
+    position: absolute;
+    z-index: 1;
+    -webkit-transform-style: preserve-3d;
+    -webkit-transition: transform 1s;
+}
+
+div.card._As { background-position: -6px -348px; }
+div.card._Ks { background-position: -1496px -348px; }
+div.card._Qs { background-position: -1371px -348px; }
+div.card._Js { background-position: -1246px -348px; }
+div.card._10s { background-position: -1122px -348px; }
+div.card._9s { background-position: -998px -348px; }
+div.card._8s { background-position: -874px -348px; }
+div.card._7s { background-position: -750px -348px; }
+div.card._6s { background-position: -626px -348px; }
+div.card._5s { background-position: -502px -348px; }
+div.card._4s { background-position: -378px -348px; }
+div.card._3s { background-position: -254px -348px; }
+div.card._2s { background-position: -130px -348px; }
+
+div.card._Ah { background-position: -6px -176px; }
+div.card._Kh { background-position: -1496px -176px; }
+div.card._Qh { background-position: -1371px -176px; }
+div.card._Jh { background-position: -1246px -176px; }
+div.card._10h { background-position: -1122px -176px; }
+div.card._9h { background-position: -998px -176px; }
+div.card._8h { background-position: -874px -176px; }
+div.card._7h { background-position: -750px -176px; }
+div.card._6h { background-position: -626px -176px; }
+div.card._5h { background-position: -502px -176px; }
+div.card._4h { background-position: -378px -176px; }
+div.card._3h { background-position: -254px -176px; }
+div.card._2h { background-position: -130px -176px; }
+
+div.card._Ac { background-position: -6px -4px; }
+div.card._Kc { background-position: -1496px -4px; }
+div.card._Qc { background-position: -1371px -4px; }
+div.card._Jc { background-position: -1246px -4px; }
+div.card._10c { background-position: -1122px -4px; }
+div.card._9c { background-position: -998px -4px; }
+div.card._8c { background-position: -874px -4px; }
+div.card._7c { background-position: -750px -4px; }
+div.card._6c { background-position: -626px -4px; }
+div.card._5c { background-position: -502px -4px; }
+div.card._4c { background-position: -378px -4px; }
+div.card._3c { background-position: -254px -4px; }
+div.card._2c { background-position: -130px -4px; }
+
+div.card._Ad { background-position: -6px -519px; }
+div.card._Kd { background-position: -1496px -519px; }
+div.card._Qd { background-position: -1371px -519px; }
+div.card._Jd { background-position: -1246px -519px; }
+div.card._10d { background-position: -1122px -519px; }
+div.card._9d { background-position: -998px -519px; }
+div.card._8d { background-position: -874px -519px; }
+div.card._7d { background-position: -750px -519px; }
+div.card._6d { background-position: -626px -519px; }
+div.card._5d { background-position: -502px -519px; }
+div.card._4d { background-position: -378px -519px; }
+div.card._3d { background-position: -254px -519px; }
+div.card._2d { background-position: -130px -519px; }
+
+div.card.flipped {
+    -webkit-transform: rotateY(45deg);
+}
+
+div.player-card {
+    height: 300px;
+    width: 200px;
+    position: absolute;
+    z-index: 1;
+}
+
+    div.player-card.n {
+        top: 43px;
+        left: 50%;
+        margin-left: -227px;
+    }
+
+    div.player-card.e {
+        top: 50%;
+        margin-top: -88px;
+        right: 426px;
+        -webkit-transform: rotate(90deg);
+    }
+
+    div.player-card.s {
+        bottom: -93px;
+        left: 50%;
+        margin-left: -223px;
+    }
+
+    div.player-card.w {
+        top: 50%;
+        margin-top: -110px;
+        left: 11px;
+        -webkit-transform: rotate(90deg);
+    }

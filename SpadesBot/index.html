@@ -1,0 +1,190 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Spades</title>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
+    <link href="/assets/css/spades.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    
+    <div class="player-config n">
+        <div class="colorbar"></div>
+        <h4>Player 1</h4>
+        <input type="text" id="player1_url" placeholder="http://localhost"/>
+        <div id="player1_bid" class="bid" style="display:none;">...</div>
+    </div>
+    <div class="player-card n" id="player1_card"></div>
+
+    <div class="player-config e">
+        <div class="colorbar"></div>
+        <h4>Player 2</h4>
+        <input type="text" id="player2_url" placeholder="http://localhost" />
+        <div id="player2_bid" class="bid" style="display:none;">...</div>
+    </div>
+    <div class="player-card e" id="player2_card"></div>
+
+    <div class="player-config s">
+        <div class="colorbar"></div>
+        <h4>Player 3</h4>
+        <input type="text" id="player3_url" placeholder="http://localhost" />
+        <div id="player3_bid" class="bid" style="display:none;">...</div>
+    </div>
+    <div class="player-card s" id="player3_card"></div>
+
+    <div class="player-config w">
+        <div class="colorbar"></div>
+        <h4>Player 4</h4>
+        <input type="text" id="player4_url" placeholder="http://localhost" />
+        <div id="player4_bid" class="bid" style="display:none;">...</div>
+    </div>
+    <div class="player-card w" id="player4_card"></div>
+    
+    <div class="score-card">
+        <div class="content">
+            <h3>Spades</h3>    
+            <table id="score">
+                <tr>
+                    <th class="red">Team 1</th>
+                    <th class="blue">Team 2</th>
+                </tr>
+            </table>
+        </div>
+        <input type="button" id="btnStartGame" value="Start Game" />
+    </div>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="/assets/js/jquery.signalr.js"></script>
+    <script src="/signalr/hubs?v="></script>
+    <script src="/assets/js/spades.js"></script>
+
+    <script>
+        $(function () {
+
+            var spades = new Spades();
+
+            $('#player1_url').change(function () {
+                spades.config.player1_url = $(this).val();
+            });
+
+            $('#player2_url').change(function () {
+                spades.config.player2_url = $(this).val();
+            });
+
+            $('#player3_url').change(function() {
+                spades.config.player3_url = $(this).val();
+            });
+
+            $('#player3_url').change(function() {
+                spades.config.player4_url = $(this).val();
+            });
+
+            $('#btnStartGame').click(function () {
+                if ($(this).val() == 'Start Game') {
+                    spades.start();
+                    $(this).val('End Game');
+                }
+                else {
+                    spades.stop();
+                    $(this).val('Start Game');
+                    
+                    $('div.player-card').fadeOut(500, function () {
+                        $('div.player-card').empty().show();
+                    });
+
+                    $('div.player-config div.bid').fadeOut(500, function () {
+                        $('div.player-config input').fadeIn(500);
+                    });
+                }
+            });
+
+            spades.events.onGameStart = function () {
+                $('body').removeClass('red');
+                $('body').removeClass('blue');
+                $('tr.scored').fadeOut(500, function () {
+                    $('tr.scored').remove();
+                });
+                
+                $('div.player-config input').fadeOut(500, function () {
+                    $('div.player-config div.bid').fadeIn(500);
+                });
+            };
+
+            spades.events.onRoundStart = function() {
+                $('#score').append('<tr id="pending"><td class="red">...</td><td class="blue">...</td></tr>');
+                $('div.bid').html('...');
+            };
+
+            spades.events.onBid = function (player, bid) {
+                $('#player' + player + '_bid').html('0/' + bid);
+            };
+
+            spades.events.onPlay = function(player, card) {
+                playCard(player, card);
+            };
+
+            spades.events.onBookComplete = function(book, round, game) {
+                $('div.player-card').fadeOut(200, function () {
+                    $('div.player-card').empty().show();
+                });
+
+                var bid = 0;
+                var taken = 0;
+
+                if (book.winner == 1) {
+                    bid = round.player1_bid;
+                    taken = round.player1_taken;
+                }
+                
+                if (book.winner == 2) {
+                    bid = round.player2_bid;
+                    taken = round.player2_taken;
+                }
+                
+                if (book.winner == 3) {
+                    bid = round.player3_bid;
+                    taken = round.player3_taken;
+                }
+                
+                if (book.winner == 4) {
+                    bid = round.player4_bid;
+                    taken = round.player4_taken;
+                }
+
+                $('#player' + book.winner + '_bid').html(taken + '/' + bid);
+            };
+
+            spades.events.onRoundComplete = function(round, game) {
+                $('#pending').remove();
+                $('#score').append('<tr class="scored"><td class="red">' + game.team1_score + '</td>' +
+                    '<td class="blue">' + game.team2_score + '</td></tr>');
+            };
+
+            spades.events.onGameComplete = function(game) {
+                if (game.team1_score > game.team2_score)
+                    $('body').addClass('red');
+                else
+                    $('body').addClass('blue');
+
+                $('#btnStartGame').click();
+            };
+            
+        });
+        
+        var playCard = function(player, card)
+        {
+            var div = $('<div class="card"></div>');
+            div.css('opacity', '0');
+            div.addClass('_' + card);
+
+            var direction = (player == 3 || player == 4) ? -1 : 1;
+
+            $('body').append(div);
+            $('#player' + player + '_card').append(div);
+            $('#player' + player + '_card div.card').animate({
+                opacity: 1,
+                top: (20 * direction) + '%'
+            });
+        };
+    </script>
+</body>
+</html>
