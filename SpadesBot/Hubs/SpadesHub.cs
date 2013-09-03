@@ -47,33 +47,41 @@ namespace SpadesBot.Hubs
             {
                 var p = (i > 4) ? (i - 4) : i;
                 int bid;
+                try
+                {
+                    if (client.Blind(p, round, game))
+                    {
+                        bid = -1;
+                        client.Deal(p, hands[p], round, game);
+                    }
+                    else
+                    {
+                        bid = client.Deal(p, hands[p], round, game);
+                        if (bid < 0 || bid > 13)
+                            Clients.Caller.log("WARNING: Player " + p + " has made an illegal bid.");
+                    }
 
-                if (client.Blind(p, round, game))
-                {
-                    bid = -1;
-                    client.Deal(p, hands[p], round, game);
+                    switch (p)
+                    {
+                        case 1:
+                            round.player1_bid = bid;
+                            break;
+                        case 2:
+                            round.player2_bid = bid;
+                            break;
+                        case 3:
+                            round.player3_bid = bid;
+                            break;
+                        case 4:
+                            round.player4_bid = bid;
+                            break;
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    bid = client.Deal(p, hands[p], round, game);
-                    if (bid < 0 || bid > 13)
-                        Clients.Caller.log("WARNING: Player " + p + " has made an illegal bid.");
-                }
-                
-                switch (p)
-                {
-                    case 1:
-                        round.player1_bid = bid;
-                        break;
-                    case 2:
-                        round.player2_bid = bid;
-                        break;
-                    case 3:
-                        round.player3_bid = bid;
-                        break;
-                    case 4:
-                        round.player4_bid = bid;
-                        break;
+                    Misplay(p, "endpoint threw an exception", game);
+                    Clients.Caller.log(ex.ToString());
+                    return;
                 }
 
                 Clients.Caller.bid(p, bid);
@@ -82,7 +90,16 @@ namespace SpadesBot.Hubs
 
             for (var i = 1; i <= 4; i++)
             {
-                client.Bid(i, round, game);
+                try
+                {
+                    client.Bid(i, round, game);
+                }
+                catch (Exception ex)
+                {
+                    Misplay(i, "endpoint threw an exception", game);
+                    Clients.Caller.log(ex.ToString());
+                    return;
+                }
             }
 
             #endregion
@@ -101,7 +118,17 @@ namespace SpadesBot.Hubs
                 for (var j = leader; j < (leader + 4); j++)
                 {
                     var p = (j > 4) ? (j - 4) : j;
-                    var card = new Card(client.Play(p, book, round, game));
+                    Card card;
+                    try
+                    {
+                        card = new Card(client.Play(p, book, round, game));
+                    }
+                    catch (Exception ex)
+                    {
+                        Misplay(i, "endpoint threw an exception", game);
+                        Clients.Caller.log(ex.ToString());
+                        return;
+                    }
 
                     // Ensure card played is an actual card (by suit).
                     if (card.Suit != "s" && card.Suit != "h" && card.Suit != "c" && card.Suit != "d")
@@ -187,7 +214,16 @@ namespace SpadesBot.Hubs
 
                 for (var p = 1; p <= 4; p++)
                 {
-                    client.Book(p, book, game);
+                    try
+                    {
+                        client.Book(p, book, game);
+                    }
+                    catch (Exception ex)
+                    {
+                        Misplay(i, "endpoint threw an exception", game);
+                        Clients.Caller.log(ex.ToString());
+                        return;
+                    }
                 }
 
                 leader = book.winner;

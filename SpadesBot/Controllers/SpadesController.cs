@@ -29,10 +29,10 @@ namespace SpadesBot.Controllers
 
         // POST /{gameId}/{playerId}/bid
         [HttpPost]
-        public dynamic Bid(string gameId, int playerId, Round request)
+        public void Bid(string gameId, int playerId, Round request)
         {
             var logic = (LogicContainer)HttpContext.Current.Cache[gameId + playerId];
-            
+
             if (playerId == 1)
             {
                 logic.PlayerBid = (request.player1_bid.HasValue) ? request.player1_bid.Value : 0;
@@ -58,7 +58,6 @@ namespace SpadesBot.Controllers
             }
 
             HttpContext.Current.Cache[gameId + playerId] = logic;
-            return new { status = "ok" };
         }
 
         // POST /{gameId}/{playerId}/play
@@ -76,7 +75,7 @@ namespace SpadesBot.Controllers
 
         // POST /{gameId}/{playerId}/book
         [HttpPost]
-        public dynamic Book(string gameId, int playerId, Book request)
+        public void Book(string gameId, int playerId, Book request)
         {
             var logic = (LogicContainer)HttpContext.Current.Cache[gameId + playerId];
             var bookCards = new List<Card>
@@ -146,8 +145,6 @@ namespace SpadesBot.Controllers
 
             logic.PlayedCards.AddRange(bookCards.Where(x => !logic.PlayedCards.Contains(x)));
             HttpContext.Current.Application[gameId + playerId] = logic;
-
-            return new {status = "ok"};
         }
     }
 }

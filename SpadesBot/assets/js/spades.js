@@ -2,14 +2,14 @@
     var spades = this;
 
     this.config = {
-        player1_url: 'http://10.211.55.3/',
-        player2_url: 'http://10.211.55.3/',
-        player3_url: 'http://10.211.55.3/',
-        player4_url: 'http://10.211.55.3/',
-        //player1_url: 'http://localhost:14170/',
-        //player2_url: 'http://localhost:14170/',
-        //player3_url: 'http://localhost:14170/',
-        //player4_url: 'http://localhost:14170/',
+        //player1_url: 'http://10.211.55.3/',
+        //player2_url: 'http://10.211.55.3/',
+        //player3_url: 'http://10.211.55.3/',
+        //player4_url: 'http://10.211.55.3/',
+        player1_url: 'http://localhost:14170/',
+        player2_url: 'http://localhost:14170/',
+        player3_url: 'http://localhost:14170/',
+        player4_url: 'http://localhost:14170/',
         limit: 500
     };
 

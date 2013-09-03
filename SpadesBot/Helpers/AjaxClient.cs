@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using SlimRest.Client;
 using SlimRest.Request;
@@ -21,7 +22,6 @@ namespace SpadesBot.Helpers
                                      {
                                          Data = new
                                                     {
-                                                        player = player,
                                                         round = round,
                                                         game = game
                                                     }
@@ -32,26 +32,45 @@ namespace SpadesBot.Helpers
         public int Deal(int player, List<string> hand, Round round, Game game)
         {
             var client = new RestClient(GetBaseUrl(game, player));
-            var result = client.Post<DealResponse, dynamic>(new RestDataRequest<dynamic>("deal")
-                                                     {
-                                                         Data = new
-                                                                    {
-                                                                        player = player,
-                                                                        hand = hand,
-                                                                        round = round,
-                                                                        game = game
-                                                                    }
-                                                     });
+            var result = new DealResponse { bid = 0 };
+            try
+            {
+                result = client.Post<DealResponse, dynamic>(new RestDataRequest<dynamic>("deal")
+                {
+                    Data = new
+                    {
+                        hand = hand,
+                        round = round,
+                        game = game
+                    }
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                // No response is required at this endpoint, SlimRest doesn't support responseless POST
+                if (ex.Message != "Unrecognized Content-Type: ")
+                    throw;
+            }
+            
             return result.bid;
         }
 
         public void Bid(int player, Round round, Game game)
         {
             var client = new RestClient(GetBaseUrl(game, player));
-            client.Post<dynamic, Round>(new RestDataRequest<Round>("bid")
-                                   {
-                                       Data = round
-                                   });
+            try
+            {
+                client.Post<dynamic, Round>(new RestDataRequest<Round>("bid")
+                {
+                    Data = round
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                // No response is required at this endpoint, SlimRest doesn't support responseless POST
+                if (ex.Message != "Unrecognized Content-Type: ")
+                    throw;
+            }
         }
 
         public string Play(int player, Book book, Round round, Game game)
@@ -65,8 +84,16 @@ namespace SpadesBot.Helpers
         public void Book(int player, Book book, Game game)
         {
             var client = new RestClient(GetBaseUrl(game, player));
-            client.Post<dynamic, Book>(
-                new RestDataRequest<Book>("book") { Data = book });
+            try
+            {
+                client.Post<dynamic, Book>(new RestDataRequest<Book>("book") { Data = book });
+            }
+            catch (ArgumentException ex)
+            {
+                // No response is required at this endpoint, SlimRest doesn't support responseless POST
+                if (ex.Message != "Unrecognized Content-Type: ")
+                    throw;
+            }
         }
 
         private string GetBaseUrl(Game game, int player)
