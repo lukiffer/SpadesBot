@@ -80,35 +80,90 @@ namespace SpadesBot.Hubs
                 Thread.Sleep(1000);
             }
 
+            for (var i = 1; i <= 4; i++)
+            {
+                client.Bid(i, round, game);
+            }
+
             #endregion
 
             #region PLAYING
 
             var books = new List<Book>();
             var leader = game.leader;
+            var spadesBroken = false;
 
             for (var i = 0; i < 13; i++)
             {
                 var book = new Book { leader = leader };
+                var leadSuit = String.Empty;
 
                 for (var j = leader; j < (leader + 4); j++)
                 {
                     var p = (j > 4) ? (j - 4) : j;
-                    var card = client.Play(p, book, round, game);
+                    var card = new Card(client.Play(p, book, round, game));
 
-                    //TODO: VALIDATE THAT THE CARD RETURNED IS ACTUALLY IN PLAYERS HAND.
-                    //TODO: VALIDATE THAT THE CARD CAN BE PLAYED (PLAYER IS FOLLOWING SUIT IF POSSIBLE + SPADES HAVE/HAVENT BEEN BROKEN)
+                    // Ensure card played is an actual card (by suit).
+                    if (card.Suit != "s" && card.Suit != "h" && card.Suit != "c" && card.Suit != "d")
+                    {
+                        Misplay(p, "played a suit that does not exist.", game);
+                        return;
+                    }
+
+                    // Ensure card played is an actual card (by rank).
+                    if (card.Rank < 2 || card.Rank > 14)
+                    {
+                        Misplay(p, "played a rank that does not exist.", game);
+                        return;
+                    }
+
+                    // Ensure card played is in the player's hand.
+                    if (hands[p].All(x => x != card.ToString()))
+                    {
+                        Misplay(p, "played a card they did not possess.", game);
+                        return;
+                    }
+
+                    if (p == leader)
+                    {
+                        // Ensure spades can be broken by leader (all remaining cards in hand are spades).
+                        leadSuit = card.Suit;
+                        if (card.Suit == "s" && !spadesBroken)
+                        {
+                            if (hands[p].Any(x => new Card(x).Suit != "s"))
+                            {
+                                Misplay(p, "prematurely broken spades", game);
+                                return;
+                            }
+                            
+                            spadesBroken = true;
+                        }
+                    }
+                    else
+                    {
+                        // Ensure that player is following suit (if able).
+                        if (hands[p].Any(x => new Card(x).Suit == leadSuit) && card.Suit != leadSuit)
+                        {
+                            Misplay(p, "did not follow suit when able", game);
+                            return;
+                        }
+                        
+                        if (card.Suit == "s")
+                            spadesBroken = true;
+                    }
 
                     if (p == 1)
-                        book.player1_card = card;
+                        book.player1_card = card.ToString();
                     if (p == 2)
-                        book.player2_card = card;
+                        book.player2_card = card.ToString();
                     if (p == 3)
-                        book.player3_card = card;
+                        book.player3_card = card.ToString();
                     if (p == 4)
-                        book.player4_card = card;
+                        book.player4_card = card.ToString();
 
-                    Clients.Caller.play(p, card);
+                    hands[p].Remove(card.ToString());
+
+                    Clients.Caller.play(p, card.ToString());
 
                     Thread.Sleep(300);
                 }
@@ -185,20 +240,14 @@ namespace SpadesBot.Hubs
 
             for (var p = 1; p <= 4; p++)
             {
-                result[p] = new List<string>();
-
-                for (var i = 0; i < 13; i++)
-                    result[p].Add(PickRandom(deck));    
+                result[p] = deck.OrderBy(x => Guid.NewGuid()).Take(13).ToList();
+                foreach (var card in result[p])
+                {
+                    deck.Remove(card);
+                }
             }
 
             return result;
-        }
-
-        private string PickRandom(List<string> deck)
-        {
-            var card = deck[new Random().Next(0, deck.Count - 1)];
-            deck.Remove(card);
-            return card;
         }
 
         private void ScoreBook(Book book)
@@ -332,6 +381,15 @@ namespace SpadesBot.Hubs
                 if (team == 2)
                     game.team2_bags = count;
             }
+        }
+
+        private void Misplay(int cheater, string infraction, Game game)
+        {
+            var winner = (cheater == 1 || cheater == 3) ? 2 : 1;
+            Clients.Caller.log("WARNING: Player " + cheater + " has played an illegal card (" + infraction + ").");
+            Clients.Caller.log("Team " + winner + " is awarded the win due to misplay.");
+            game.team1_score = (winner == 1) ? 500 : 0;
+            game.team2_score = (winner == 2) ? 500 : 0;
         }
     }
 }

@@ -11,7 +11,13 @@ namespace SpadesBot
             RouteTable.Routes.MapHubs();
             RouteTable.Routes.IgnoreRoute("signalr/{*pathInfo}");
             GlobalConfiguration.Configuration.Routes.MapHttpRoute(
-                "api", "{gameId}/{action}", new { controller = "Spades", gameId = RouteParameter.Optional });
+                "api", "{gameId}/{playerId}/{action}", 
+                new
+                    {
+                        controller = "Spades", 
+                        gameId = RouteParameter.Optional, 
+                        playerId = RouteParameter.Optional
+                    });
         }
     }
 }

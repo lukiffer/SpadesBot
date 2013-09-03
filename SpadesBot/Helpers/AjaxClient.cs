@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Text;
+using SlimRest.Client;
 using SlimRest.Request;
 using SpadesBot.Models;
 
@@ -14,8 +16,8 @@ namespace SpadesBot.Helpers
 
         public bool Blind(int player, Round round, Game game)
         {
-            var client = new SlimRest.Client.RestClient(GetBaseUrl(player));
-            var result = client.Post<BlindResponse, dynamic>(new RestDataRequest<dynamic>(game.id + "/blind")
+            var client = new RestClient(GetBaseUrl(game, player));
+            var result = client.Post<BlindResponse, dynamic>(new RestDataRequest<dynamic>("blind")
                                      {
                                          Data = new
                                                     {
@@ -29,8 +31,8 @@ namespace SpadesBot.Helpers
 
         public int Deal(int player, List<string> hand, Round round, Game game)
         {
-            var client = new SlimRest.Client.RestClient(GetBaseUrl(player));
-            var result = client.Post<DealResponse, dynamic>(new RestDataRequest<dynamic>(game.id + "/deal")
+            var client = new RestClient(GetBaseUrl(game, player));
+            var result = client.Post<DealResponse, dynamic>(new RestDataRequest<dynamic>("deal")
                                                      {
                                                          Data = new
                                                                     {
@@ -43,37 +45,49 @@ namespace SpadesBot.Helpers
             return result.bid;
         }
 
+        public void Bid(int player, Round round, Game game)
+        {
+            var client = new RestClient(GetBaseUrl(game, player));
+            client.Post<dynamic, Round>(new RestDataRequest<Round>("bid")
+                                   {
+                                       Data = round
+                                   });
+        }
+
         public string Play(int player, Book book, Round round, Game game)
         {
-            var client = new SlimRest.Client.RestClient(GetBaseUrl(player));
-            var result = client.Post<PlayResponse, Book>(
-                new RestDataRequest<Book>(game.id + "/play") { Data = book });
+            var client = new RestClient(GetBaseUrl(game, player));
+            var result = client.Post<PlayResponse, Book>(new RestDataRequest<Book>("play") { Data = book });
 
             return result.card;
         }
 
         public void Book(int player, Book book, Game game)
         {
-            var client = new SlimRest.Client.RestClient(GetBaseUrl(player));
-            client.Post<PlayResponse, Book>(
-                new RestDataRequest<Book>(game.id + "/play") { Data = book });
+            var client = new RestClient(GetBaseUrl(game, player));
+            client.Post<dynamic, Book>(
+                new RestDataRequest<Book>("book") { Data = book });
         }
 
-        private string GetBaseUrl(int player)
+        private string GetBaseUrl(Game game, int player)
         {
+            var result = new StringBuilder();
             if (player == 1)
-                return _config.player1_url;
+                result.Append(_config.player1_url);
 
             if (player == 2)
-                return _config.player2_url;
+                result.Append(_config.player2_url);
 
             if (player == 3)
-                return _config.player3_url;
+                result.Append(_config.player3_url);
 
             if (player == 4)
-                return _config.player4_url;
+                result.Append(_config.player4_url);
 
-            return null;
+            result.AppendFormat("/{0}", game.id);
+            result.AppendFormat("/{0}", player);
+
+            return result.ToString();
         }
     }
 }

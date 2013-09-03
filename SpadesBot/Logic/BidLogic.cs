@@ -7,7 +7,7 @@ namespace SpadesBot.Logic
 {
     public class BidLogic
     {
-        public static int Bid(List<Card> hand)
+        public int Bid(List<Card> hand)
         {
             var trump = hand.Count(x => x.Suit == "s");
             var marked = 0;
@@ -34,18 +34,15 @@ namespace SpadesBot.Logic
             if (bid < 1.5m && !hand.Any(x => x.Rank > 11) && trump < 3)
                 return 0;
 
-            if (trump > 5)
+            if (hand.Count(x => x.Rank > 9 && x.Suit == "s") > 2)
                 bid += 0.33m;
 
-            if (hand.Count(x => x.Rank > 9 && x.Suit == "s") > 2)
-                bid += 0.66m;
-
             //Agressiveness factor.
-            bid = bid * 1.125m;
+            bid += 0.33m;
             return Convert.ToInt32(Math.Round(bid, MidpointRounding.AwayFromZero));
         }
 
-        private static dynamic ProcessSuit(List<Card> cards, int trump)
+        private dynamic ProcessSuit(List<Card> cards, int trump)
         {
             var projected = 0m;
             var marked = 0m;
