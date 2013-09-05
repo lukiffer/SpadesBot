@@ -4,6 +4,12 @@ namespace SpadesBot.Models
 {
     public class Card
     {
+        public Card(int rank, string suit)
+        {
+            Suit = suit;
+            Rank = rank;
+        }
+
         public Card(string card)
         {
             Suit = (card.Length) == 3 ? card.Substring(2, 1) : card.Substring(1, 1);

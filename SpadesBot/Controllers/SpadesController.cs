@@ -37,24 +37,32 @@ namespace SpadesBot.Controllers
             {
                 logic.PlayerBid = (request.player1_bid.HasValue) ? request.player1_bid.Value : 0;
                 logic.PartnerBid = (request.player3_bid.HasValue) ? request.player3_bid.Value : 0;
+                logic.LeftBid = (request.player2_bid.HasValue) ? request.player2_bid.Value : 0;
+                logic.RightBid = (request.player4_bid.HasValue) ? request.player4_bid.Value : 0;
             }
 
             if (playerId == 2)
             {
                 logic.PlayerBid = (request.player2_bid.HasValue) ? request.player2_bid.Value : 0;
                 logic.PartnerBid = (request.player4_bid.HasValue) ? request.player4_bid.Value : 0;
+                logic.LeftBid = (request.player3_bid.HasValue) ? request.player3_bid.Value : 0;
+                logic.RightBid = (request.player1_bid.HasValue) ? request.player1_bid.Value : 0;
             }
 
             if (playerId == 3)
             {
                 logic.PlayerBid = (request.player3_bid.HasValue) ? request.player3_bid.Value : 0;
                 logic.PartnerBid = (request.player1_bid.HasValue) ? request.player1_bid.Value : 0;
+                logic.LeftBid = (request.player4_bid.HasValue) ? request.player4_bid.Value : 0;
+                logic.RightBid = (request.player2_bid.HasValue) ? request.player2_bid.Value : 0;
             }
 
             if (playerId == 4)
             {
                 logic.PlayerBid = (request.player4_bid.HasValue) ? request.player4_bid.Value : 0;
                 logic.PartnerBid = (request.player2_bid.HasValue) ? request.player2_bid.Value : 0;
+                logic.LeftBid = (request.player1_bid.HasValue) ? request.player1_bid.Value : 0;
+                logic.RightBid = (request.player3_bid.HasValue) ? request.player3_bid.Value : 0;
             }
 
             HttpContext.Current.Cache[gameId + playerId] = logic;
@@ -65,7 +73,7 @@ namespace SpadesBot.Controllers
         public PlayResponse Play(string gameId, int playerId, Book request)
         {
             var logic = (LogicContainer)HttpContext.Current.Cache[gameId + playerId];
-            var play = new PlayLogic().Play(gameId, logic, request);
+            var play = new PlayLogic(gameId, logic, request).Play(out logic);
             
             logic.HandCards.Remove(play);
             HttpContext.Current.Application[gameId + playerId] = logic;

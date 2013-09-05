@@ -22,6 +22,8 @@ namespace SpadesBot.Models
 
         public int PlayerBid { get; set; }
         public int PartnerBid { get; set; }
+        public int LeftBid { get; set; }
+        public int RightBid { get; set; }
 
         public bool PlayerIsNil
         {
