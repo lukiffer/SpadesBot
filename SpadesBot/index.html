@@ -124,9 +124,11 @@
             };
 
             spades.events.onBookComplete = function(book, round, game) {
-                $('div.player-card').fadeOut(200, function () {
-                    $('div.player-card').empty().show();
-                });
+                setTimeout(function() {
+                    $('div.player-card').fadeOut(100, function() {
+                        $('div.player-card').empty().show();
+                    });
+                }, 1760);
 
                 var bid = 0;
                 var taken = 0;
@@ -134,22 +136,28 @@
                 if (book.winner == 1) {
                     bid = round.player1_bid;
                     taken = round.player1_taken;
+                    $('div#player1_card div.card').addClass('winner');
                 }
                 
                 if (book.winner == 2) {
                     bid = round.player2_bid;
                     taken = round.player2_taken;
+                    $('div#player2_card div.card').addClass('winner');
                 }
                 
                 if (book.winner == 3) {
                     bid = round.player3_bid;
                     taken = round.player3_taken;
+                    $('div#player3_card div.card').addClass('winner');
                 }
                 
                 if (book.winner == 4) {
                     bid = round.player4_bid;
                     taken = round.player4_taken;
+                    $('div#player4_card div.card').addClass('winner');
                 }
+                
+                $('div.player-card div.card:not(.winner)').animate({ opacity: 0.4 });
 
                 $('#player' + book.winner + '_bid').html(taken + '/' + bid);
             };

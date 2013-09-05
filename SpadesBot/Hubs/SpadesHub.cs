@@ -229,9 +229,8 @@ namespace SpadesBot.Hubs
                 leader = book.winner;
                 books.Add(book);
 
-                Thread.Sleep(1000);
                 Clients.Caller.bookComplete(book, round, game);
-                Thread.Sleep(1000);
+                Thread.Sleep(3000);
             }
 
             #endregion
@@ -266,7 +265,7 @@ namespace SpadesBot.Hubs
             game.leader = (game.leader == 4) ? 1 : (game.leader + 1);
 
             Clients.Caller.roundComplete(round, game);
-            Thread.Sleep(1000);
+            Thread.Sleep(2000);
         }
 
         private Dictionary<int, List<string>> Deal()
