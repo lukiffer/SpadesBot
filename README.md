@@ -3,8 +3,8 @@ SpadesBot
 
 SpadesBot is a client/server/server application that facilitates a game of spades between four JSON-RPC endpoints. The app also has some basic playing AI to fill-in for missing players.
 
-Building Your Your API
-======================
+Building Your API
+=================
 
 Your API should expose the following JSON RPC endpoints. All endpoints should accept and return content-type `application/json`. Also note that if your endpoint throws an exception, your team will forfeit the game.
 
